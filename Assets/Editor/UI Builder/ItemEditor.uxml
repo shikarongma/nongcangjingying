@@ -1,0 +1,52 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <ui:VisualElement name="Container" style="flex-grow: 1; width: 100%; flex-direction: row; height: 100%;">
+        <ui:VisualElement name="ItemList" style="width: 30%; height: 100%;">
+            <ui:VisualElement name="Header" style="width: auto; height: 5%; flex-direction: row; justify-content: space-between;">
+                <ui:Label text="ItemList&#10;" display-tooltip-when-elided="true" style="font-size: 20px;" />
+                <ui:Button text="+" display-tooltip-when-elided="true" name="AddButton" style="-unity-text-align: middle-center;" />
+            </ui:VisualElement>
+            <ui:ListView focusable="true" name="ListView" reorderable="true" show-foldout-header="false" show-border="true" style="width: auto; height: auto; flex-grow: 1;" />
+        </ui:VisualElement>
+        <ui:ScrollView name="ItemDetails" style="flex-basis: auto; width: 70%; height: 100%; margin-left: 5px; margin-right: 5px; margin-top: 0; margin-bottom: 0;">
+            <ui:VisualElement name="Header" style="width: auto; height: 5%; flex-direction: row; justify-content: space-between;">
+                <ui:Label text="Details Information" display-tooltip-when-elided="true" style="font-size: 20px;" />
+                <ui:Button text="Delete&#10;" display-tooltip-when-elided="true" name="DeleteButton" style="-unity-text-align: upper-center;" />
+            </ui:VisualElement>
+            <ui:VisualElement name="Content" style="flex-grow: 1;">
+                <ui:VisualElement name="Row1" style="border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); border-left-width: 1px; border-right-width: 1px; border-top-width: 1px; border-bottom-width: 1px; height: auto; width: auto; margin-left: 5px; margin-right: 5px; margin-top: 5px; margin-bottom: 5px;">
+                    <ui:Label text="General" display-tooltip-when-elided="true" name="Header" style="padding-left: 10px; padding-top: 3px; padding-bottom: 3px; background-color: rgb(96, 96, 96); -unity-font-style: bold; margin-left: 0; margin-right: 0; margin-top: 0; margin-bottom: 0;" />
+                    <ui:VisualElement name="Container" style="flex-direction: row; align-items: center;">
+                        <ui:VisualElement name="Icon" style="background-image: url(&apos;project://database/Assets/M%20Studio/Art/Items/Icons/icon_M.png?fileID=2800000&amp;guid=ef065fb65f97e43f8b673d7718f87178&amp;type=3#icon_M&apos;); width: 80px; height: 80px; -unity-text-align: upper-left; -unity-background-scale-mode: stretch-to-fill; margin-left: 5px; margin-right: 5px; margin-top: 5px; margin-bottom: 5px;" />
+                        <ui:VisualElement name="Gerneral" style="flex-grow: 1; margin-left: 0; margin-right: 5px; margin-top: 5px; margin-bottom: 5px; border-left-width: 1px; border-right-width: 1px; border-top-width: 1px; border-bottom-width: 1px; border-left-color: rgba(0, 0, 0, 0.99); border-right-color: rgba(0, 0, 0, 0.99); border-top-color: rgba(0, 0, 0, 0.99); border-bottom-color: rgba(0, 0, 0, 0.99);">
+                            <uie:IntegerField label="ID" value="0" name="ItemID" style="-unity-text-align: middle-left; padding-left: 3px; padding-right: 3px; padding-top: 3px; padding-bottom: 3px;" />
+                            <ui:TextField picking-mode="Ignore" label="Name" value="filler text" name="ItemName" style="-unity-text-align: middle-left; padding-left: 3px; padding-right: 3px; padding-top: 3px; padding-bottom: 3px;" />
+                            <uie:EnumField label="Type" value="Center" name="ItemType" style="-unity-text-align: middle-left; padding-left: 3px; padding-right: 3px; padding-top: 3px; padding-bottom: 3px;" />
+                            <uie:ObjectField label="Icon" type="UnityEngine.Sprite, UnityEngine.CoreModule" name="ItemIcon" style="-unity-text-align: middle-left; padding-left: 3px; padding-right: 3px; padding-top: 3px; padding-bottom: 3px;" />
+                            <uie:ObjectField label="OnWorld Sprite" name="ItemSprite" type="UnityEngine.Sprite, UnityEngine.CoreModule" style="-unity-text-align: middle-left; padding-left: 3px; padding-right: 3px; padding-top: 3px; padding-bottom: 3px;" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement name="Row2" style="border-left-width: 1px; border-right-width: 1px; border-top-width: 1px; border-bottom-width: 1px; border-left-color: rgba(0, 0, 0, 0.92); border-right-color: rgba(0, 0, 0, 0.92); border-top-color: rgba(0, 0, 0, 0.92); border-bottom-color: rgba(0, 0, 0, 0.92); margin-left: 5px; margin-right: 5px; margin-top: 5px; margin-bottom: 5px;">
+                    <ui:Label text="Description" display-tooltip-when-elided="true" name="Header" style="margin-left: 0; margin-right: 0; margin-top: 0; margin-bottom: 0; padding-left: 10px; padding-top: 3px; padding-bottom: 3px; background-color: rgb(89, 89, 89);" />
+                    <ui:VisualElement name="Container">
+                        <ui:TextField picking-mode="Ignore" name="Description" multiline="true" style="flex-grow: 1; height: 80px;" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement name="Row3" style="flex-direction: row; justify-content: space-between; margin-left: 5px; margin-right: 5px; margin-top: 5px; margin-bottom: 5px; border-left-width: 0; border-right-width: 0; border-top-width: 0; border-bottom-width: 0; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); align-items: stretch;">
+                    <ui:VisualElement name="left" style="width: 50%; border-left-width: 1px; border-right-width: 1px; border-top-width: 1px; border-bottom-width: 1px; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); margin-left: 0; margin-right: 2px; margin-top: 0; margin-bottom: 0; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0;">
+                        <ui:Label text="Description" display-tooltip-when-elided="true" name="Header" style="padding-left: 10px; padding-top: 3px; padding-bottom: 3px; background-color: rgb(94, 94, 94);" />
+                        <uie:IntegerField label="Use Radius" value="0" name="ItemUseRadius" style="padding-left: 5px; padding-right: 5px; padding-top: 5px; padding-bottom: 5px;" />
+                        <ui:Toggle label="Can Pickedup" name="CanPickedup" style="padding-left: 5px; padding-right: 5px; padding-top: 5px; padding-bottom: 5px;" />
+                        <ui:Toggle label="Can Dropped" name="CanDropped" style="padding-left: 5px; padding-right: 5px; padding-top: 5px; padding-bottom: 5px;" />
+                        <ui:Toggle label="Can Carried" name="CanCarried" style="padding-left: 5px; padding-right: 5px; padding-top: 5px; padding-bottom: 5px;" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="right" style="width: 50%; border-left-width: 1px; border-right-width: 1px; border-top-width: 1px; border-bottom-width: 1px; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); margin-right: 2px;">
+                        <ui:Label text="Description" display-tooltip-when-elided="true" name="Header" style="padding-left: 10px; padding-top: 3px; padding-bottom: 3px; background-color: rgb(103, 103, 103);" />
+                        <uie:IntegerField label="Price" value="0" name="Price" />
+                        <ui:Slider picking-mode="Ignore" label="SellPercentage" value="0" high-value="1" show-input-field="true" name="SellPercentage" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:ScrollView>
+    </ui:VisualElement>
+</ui:UXML>
