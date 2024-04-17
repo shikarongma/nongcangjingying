@@ -36,3 +36,10 @@ public enum Season
 {
     春季,夏季,秋季,冬季
 }
+
+//瓦片的类型
+public enum GridType
+{
+    //挖，丢物品， ，npc障碍
+    Diggable,DropItem,PlaceFurniture,NpcObstacle
+}

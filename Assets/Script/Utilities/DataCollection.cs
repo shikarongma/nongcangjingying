@@ -85,3 +85,15 @@ public class SceneItem
     public int itemID;
     public SerialiazbleVector3 position;
 }
+
+//瓦片的属性
+[System.Serializable]
+public class TileProperty
+{
+    //坐标
+    public Vector2Int tileCoordinate;
+    //类型
+    public GridType gridType;
+    //
+    public bool boolTypeValue;
+}
