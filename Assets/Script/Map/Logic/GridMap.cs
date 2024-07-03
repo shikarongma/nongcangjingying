@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -33,9 +34,14 @@ public class GridMap : MonoBehaviour
         if (!Application.IsPlaying(this))
         {
             currentTilemap = GetComponent<Tilemap>();
+            UpdateTileProperties();
+
             //在编辑模式下运行
 #if UNITY_EDITOR
-            UpdateTileProperties();
+            if (mapData != null)
+            {
+                EditorUtility.SetDirty(mapData);
+            }
 #endif
         }
     }

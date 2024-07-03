@@ -21,10 +21,10 @@ public enum InventoryLocation
     Player,Box
 }
 
-//物品此时状态
+//物品的使用
 public enum PartType
 {
-    None,Carry,Hoe,Break
+    None,Carry,Hoe,Break,Water
 }
 //玩家部分
 public enum PartName

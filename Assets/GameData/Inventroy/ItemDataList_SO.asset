@@ -271,7 +271,7 @@ MonoBehaviour:
     itemIcon: {fileID: 21300000, guid: 71ca9227166f34790bb8b1c7948d491f, type: 3}
     itemOnWorldSprite: {fileID: 0}
     itemDescription: "\u8FD9\u662F\u6316\u5730\u7684\u9504\u5934"
-    itemUseRadius: 0
+    itemUseRadius: 12
     canPickedup: 1
     canDropped: 0
     canCarried: 0
@@ -307,9 +307,9 @@ MonoBehaviour:
     itemIcon: {fileID: 21300000, guid: 5b98b5b289f8549f9bbd017e5f0aa5c7, type: 3}
     itemOnWorldSprite: {fileID: 0}
     itemDescription: "\u8FD9\u662F\u6C34\u7F50\u5934"
-    itemUseRadius: 0
+    itemUseRadius: 2
     canPickedup: 1
-    canDropped: 0
+    canDropped: 1
     canCarried: 0
     itemPrice: 0
     sellPercentage: 0

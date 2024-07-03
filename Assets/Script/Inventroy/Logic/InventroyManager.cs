@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEditor.Progress;
 
 //若要使用item相关类，需先调用其命名空间
 namespace MFram.Inventory
@@ -15,6 +16,22 @@ namespace MFram.Inventory
         //获得背包详情
         [Header("背包数据")]
         public InventoryBag_SO playerBag;
+
+        private void OnEnable()
+        {//从玩家手里物品丢出来生成物品（在这里主要是实现背包物品数量的更改）
+            EventHandler.DropItemEvent += OnDropItemEvent;
+        }
+
+        private void OnDisable()
+        {
+            EventHandler.DropItemEvent -= OnDropItemEvent;
+        }
+
+        //将物品拖到地上
+        private void OnDropItemEvent(int itemID, Vector3 position)
+        {
+            RemoveItem(itemID, 1);
+        }
 
         //初始化背包UI里面的物品
         private void Start()
@@ -61,7 +78,7 @@ namespace MFram.Inventory
         }
 
         /// <summary>
-        /// 通过物品ID判断背包里是否有该物品
+        /// 通过物品ID判断背包里是否有该物品，并返回物品序号
         /// </summary>
         /// <param name="itemID"></param>
         /// <returns></returns>
@@ -132,6 +149,39 @@ namespace MFram.Inventory
                 playerBag.itemList[targetIndex] = currentItem;
             }
             //刷新背包UI
+            EventHandler.CallUpdateInventoryUI(InventoryLocation.Player, playerBag.itemList);
+        }
+
+        /// <summary>
+        /// 移除指定背包物品
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <param name="removeAmount"></param>
+        public void RemoveItem(int ID, int removeAmount)
+        {
+            int index = GetItemIndexInBag(ID);
+
+            if (playerBag.itemList[index].itemAmount > removeAmount)
+            {
+                int currentAmount = playerBag.itemList[index].itemAmount - removeAmount;
+                InventoryItem item = new InventoryItem
+                {
+                    itemID = ID,
+                    itemAmount = currentAmount
+                };
+
+                playerBag.itemList[index] = item;
+            }
+            else if(playerBag.itemList[index].itemAmount == removeAmount)
+            {
+                InventoryItem item = new InventoryItem
+                {
+                    itemID = 0,
+                    itemAmount = 0
+                };
+                playerBag.itemList[index] = item;
+            }
+            //呼叫背包UI，更新
             EventHandler.CallUpdateInventoryUI(InventoryLocation.Player, playerBag.itemList);
         }
     }

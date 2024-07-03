@@ -21,8 +21,14 @@ public class PlayerControl : MonoBehaviour
     private Animator[] animators;
     //是否在走或者是跑步
     private bool isMoving;
-    //判断此时是否在更换场景
-    private bool isChange;
+    //是否在使用工具
+    private bool useTool;
+    //是否可用移动系统
+    private bool inputDisable;
+
+    //动画使用工具
+    private float mouseX;
+    private float mouseY;
 
     private void Awake()
     {
@@ -33,7 +39,7 @@ public class PlayerControl : MonoBehaviour
 
     void Update()
     {
-        if (!isChange)
+        if (!inputDisable)
             PlayerInput();
         else
             isMoving = false;
@@ -45,6 +51,7 @@ public class PlayerControl : MonoBehaviour
         EventHandler.MoveToPosition += OnMoveToPosition;
         EventHandler.BeforeSceneUnloadEvent += OnBeforeSceneUnloadEvent;
         EventHandler.AfterSceneUnloadEvent += OnAfterSceneUnloadEvent;
+        EventHandler.MouseClickedEvent += OnMouseClickedEvent;
     }
 
     private void OnDisable()
@@ -52,16 +59,18 @@ public class PlayerControl : MonoBehaviour
         EventHandler.MoveToPosition -= OnMoveToPosition;
         EventHandler.BeforeSceneUnloadEvent -= OnBeforeSceneUnloadEvent;
         EventHandler.AfterSceneUnloadEvent -= OnAfterSceneUnloadEvent;
+        EventHandler.MouseClickedEvent -= OnMouseClickedEvent;
     }
+
 
     private void OnBeforeSceneUnloadEvent()
     {
-        isChange = true;
+        inputDisable = true;
     }
 
     private void OnAfterSceneUnloadEvent()
     {
-        isChange = false;
+        inputDisable = false;
     }
 
     //更改玩家位置
@@ -70,9 +79,52 @@ public class PlayerControl : MonoBehaviour
         this.gameObject.transform.position = nextPosition;
     }
 
+    private void OnMouseClickedEvent(Vector3 mouseWorldPos, ItemDetails itemDetails)
+    {
+        //TODO 更改Player动画
+           //one 工具
+        if(itemDetails.itemType!=ItemType.Furniture&& itemDetails.itemType != ItemType.Commodity&& itemDetails.itemType != ItemType.Seed)
+        {
+            mouseX = mouseWorldPos.x - transform.position.x;
+            mouseY = mouseWorldPos.y - transform.position.y;
+
+            if (Mathf.Abs(mouseX) > Mathf.Abs(mouseY))//判断人物是该上下翻转还是左右翻转
+                mouseY = 0;
+            else
+                mouseX = 0;
+
+            //执行动画
+            StartCoroutine(UseToolRoutine(mouseWorldPos, itemDetails));
+        }
+        else
+        {
+            //更新完动画后，在执行后续物品的动作
+            EventHandler.CallExecuteActionAfterAnimation(mouseWorldPos, itemDetails);
+        }
+    }
+
+    private IEnumerator UseToolRoutine(Vector3 mouseWorldPos, ItemDetails itemDetails)
+    {
+        useTool = true;
+        inputDisable = true;
+        yield return null;
+        foreach(var anim in animators)
+        {
+            anim.SetTrigger("useTool");
+            anim.SetFloat("InputX", mouseX);
+            anim.SetFloat("InputY", mouseY);
+        }
+        yield return new WaitForSeconds(0.45f);
+        EventHandler.CallExecuteActionAfterAnimation(mouseWorldPos, itemDetails);
+        yield return new WaitForSeconds(0.45f);
+
+        useTool = false;
+        inputDisable = false;
+    }
+
     private void FixedUpdate()
     {
-        if (!isChange)
+        if (!inputDisable)
             Movement();
     }
 
@@ -112,6 +164,9 @@ public class PlayerControl : MonoBehaviour
         foreach(var animator in animators)
         {
             animator.SetBool("isMoving", isMoving);
+            animator.SetFloat("mouseX", mouseX);
+            animator.SetFloat("mouseY", mouseY);
+            
             if (isMoving)
             {
                 animator.SetFloat("InputX", inputX);

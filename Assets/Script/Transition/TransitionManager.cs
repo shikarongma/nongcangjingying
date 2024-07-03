@@ -14,10 +14,11 @@ namespace MFarm.Transition
         private CanvasGroup fadeCanvasGroup;
         private bool isFade;
 
-        private void Start()
+        private IEnumerator Start()
         {
+            yield return StartCoroutine(LoadSceneSetActive(startSceneName));
             fadeCanvasGroup = FindObjectOfType<CanvasGroup>();
-            StartCoroutine(LoadSceneSetActive(startSceneName));
+            EventHandler.CallAfterSceneUnloadEvent();
         }
 
         //接受切换场景的事件

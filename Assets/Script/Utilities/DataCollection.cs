@@ -97,3 +97,23 @@ public class TileProperty
     //
     public bool boolTypeValue;
 }
+//ÍßÆ¬ÏêÇé
+[System.Serializable]
+public class TileDetails
+{
+    //Î»ÖÃ
+    public int gridX;
+    public int gridY;
+
+    //ÊôÐÔ
+    public bool canDig;
+    public bool canDropItem;
+    public bool canPlaceFurniture;
+    public bool isNPCObstacle;
+
+    //ÖÖÖ²ÏêÇé
+    public int digDays = -1;
+    public int waterDays = -1;
+    public int seedItemID = -1;
+    public int growthDays = -1;
+}

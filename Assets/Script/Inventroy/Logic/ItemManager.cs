@@ -1,16 +1,22 @@
+using MFram.Inventory;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 
-namespace MFron.InvenTory
+namespace MFram.InvenTory
 {
     public class ItemManager : MonoBehaviour
     {
+        //直接生成的物品预制体（无阴影的）
         public Item itemPerfab;
+        //从玩家手上丢出来的物品预制体（有阴影的）
+        public Item bounceItemPerfab;
 
-        private Transform itemParent;
+        private Transform itemParent;//生成物体的父物体
+
+        private Transform PlayerTransform => FindObjectOfType<PlayerControl>().transform;
 
         //创建字典，记录场景中的item
         private Dictionary<string, List<SceneItem>> sceneItemDic = new Dictionary<string, List<SceneItem>>();
@@ -20,7 +26,8 @@ namespace MFron.InvenTory
         {
             EventHandler.AfterSceneUnloadEvent += OnAfterSceneUnloadEvent;
             EventHandler.BeforeSceneUnloadEvent += OnBeforeSceneUnloadEvent;
-            EventHandler.InstantiateItemInScene += OnInstantiateItemInScene;
+            EventHandler.InstantiateItemInScene += OnInstantiateItemInScene;//直接生成物品
+            EventHandler.DropItemEvent += OnDropItemEvent;//有阴影的生成物品
         }
 
         private void OnDisable()
@@ -28,8 +35,8 @@ namespace MFron.InvenTory
             EventHandler.AfterSceneUnloadEvent -= OnAfterSceneUnloadEvent;
             EventHandler.BeforeSceneUnloadEvent -= OnBeforeSceneUnloadEvent;
             EventHandler.InstantiateItemInScene -= OnInstantiateItemInScene;
+            EventHandler.DropItemEvent += OnDropItemEvent;
         }
-        
 
         //寻找物品的父物体（载物）
         private void OnAfterSceneUnloadEvent()
@@ -43,12 +50,21 @@ namespace MFron.InvenTory
             GetAllSceneItem();
         }
 
-        //将物品拖到地上
         private void OnInstantiateItemInScene(int itemID, Vector3 position)
         {
             var item = Instantiate(itemPerfab, position, Quaternion.identity, itemParent);
             item.itemID = itemID;
         }
+
+        private void OnDropItemEvent(int itemID, Vector3 mousepPos)
+        {
+            //mousePos（即物品最终的位置），而此时生成的位置应该为Player的位置，因为是从player身上生成出来的
+            var item = Instantiate(bounceItemPerfab, PlayerTransform.position, Quaternion.identity, itemParent);
+            item.itemID = itemID;
+            var dir = (mousepPos - PlayerTransform.position).normalized;//normalized,向量化，物品飞出的方向
+            item.GetComponent<ItemBounce>().InitBounceItem(mousepPos, dir);
+        }
+
         /// <summary>
         /// 获取当前场景中的全部item
         /// </summary>

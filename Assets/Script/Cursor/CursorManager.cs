@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEditor.EventSystems;
 using UnityEngine.EventSystems;
+using MFarm.Map;
 
 public class CursorManager : MonoBehaviour
 {
@@ -17,24 +18,102 @@ public class CursorManager : MonoBehaviour
 
     private RectTransform cursorCanvas;
 
+    private Transform playerTransform => GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
+
+    //鼠标检测
+    private Camera mainCamera;
+    private Grid currentGrid;
+
+    private Vector3 mouseWorldPos;
+    private Vector3Int mouseGridPos;
+
+    private bool cursorEnable;
+    //当前鼠标位置是否可用
+    private bool cursorPositionValid;
+
+    //当前物品
+    private ItemDetails currenmtItemDetails;
+
     private void OnEnable()
     {
         EventHandler.ItemSelectedEvent += OnItemSelectedEvent;
+        EventHandler.BeforeSceneUnloadEvent += OnBeforeSceneUnloadEvent;
+        EventHandler.AfterSceneUnloadEvent += OnAfterSceneUnloadEvent;
     }
 
     private void OnDisable()
     {
         EventHandler.ItemSelectedEvent -= OnItemSelectedEvent;
+        EventHandler.BeforeSceneUnloadEvent -= OnBeforeSceneUnloadEvent;
+        EventHandler.AfterSceneUnloadEvent -= OnAfterSceneUnloadEvent;
     }
 
-    private void OnItemSelectedEvent(ItemDetails itemDetails, bool isSleceted)
+
+
+    private void Start()
     {
-        if (!isSleceted)//如果没有选择，修改当前图片为normal
+        cursorCanvas = GameObject.FindGameObjectWithTag("CursorCanvas").GetComponent<RectTransform>();
+
+        cursorImage = cursorCanvas.GetChild(0).GetComponent<Image>();
+        currentImage = normal;
+        SetCursorImage(normal);
+        mainCamera = Camera.main;
+    }
+
+    private void Update()
+    {
+        if (cursorCanvas == null)
+            return;
+        cursorImage.transform.position = Input.mousePosition;
+
+        if (!InteractWithUI() && cursorEnable)
         {
-            currentImage = normal;
+            SetCursorImage(currentImage);
+            CheckCursorValid();
+            CheckPlayerInput();
         }
         else
+            SetCursorImage(normal);
+    }
+
+    private void SetCursorImage(Sprite sprite)
+    {
+        cursorImage.sprite = sprite;
+        cursorImage.color = new Color(1, 1, 1, 1);
+    }
+
+    //鼠标当前可用
+    private void SetCursorValid()
+    {
+        cursorImage.color = new Color(1, 1, 1, 1);
+        cursorPositionValid = true;
+    }
+
+    //鼠标不可用
+    private void SetCursorInValid()
+    {
+        cursorImage.color = new Color(1, 0, 0, 0.4f);
+        cursorPositionValid = false;
+    }
+
+    /// <summary>
+    /// 根据选择的物品更换鼠标图像
+    /// </summary>
+    /// <param name="itemDetails"></param>
+    /// <param name="isSleceted"></param>
+    private void OnItemSelectedEvent(ItemDetails itemDetails, bool isSleceted)
+    {
+
+        if (!isSleceted)//如果没有选择，修改当前图片为normal
         {
+            currenmtItemDetails = null;
+            cursorEnable = false;
+            currentImage = normal;
+        }
+        else//物品被选中才切换图片
+        {
+            currenmtItemDetails = itemDetails;
+            //TODO:添加所有类型对应图片
             currentImage = itemDetails.itemType switch
             {
                 ItemType.Seed => seed,
@@ -48,38 +127,79 @@ public class CursorManager : MonoBehaviour
                 ItemType.Furniture => tool,
                 _ => normal
             } ;
+            cursorEnable = true;
+
         }
     }
 
-    private void Start()
+    private void OnBeforeSceneUnloadEvent()
     {
-        cursorCanvas = GameObject.FindGameObjectWithTag("CursorCanvas").GetComponent<RectTransform>();
-
-        cursorImage = cursorCanvas.GetChild(0).GetComponent<Image>();
-        currentImage = normal;
-        SetCursorImage(normal);
-
+        cursorEnable = false;
     }
 
-    private void Update()
+    private void OnAfterSceneUnloadEvent()
     {
-        if (cursorCanvas == null)
-            return;
-        cursorImage.transform.position = Input.mousePosition;
+        currentGrid = FindObjectOfType<Grid>();
+    }
 
-        if (!InteractWithUI())
+    //鼠标点击完成物品动作
+    private void CheckPlayerInput()
+    {
+        if (Input.GetMouseButtonDown(0) && cursorPositionValid)
         {
-            SetCursorImage(currentImage);
+            EventHandler.CallMouseClickedEvent(mouseWorldPos, currenmtItemDetails);
+        }
+    }
+
+    //设置鼠标状态
+    private void CheckCursorValid()
+    {
+        mouseWorldPos = mainCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x,Input.mousePosition.y,-mainCamera.transform.position.z));
+        mouseGridPos = currentGrid.WorldToCell(mouseWorldPos);
+
+        var playerGridPos = currentGrid.WorldToCell(playerTransform.position);
+
+        if (Mathf.Abs(mouseGridPos.x - playerGridPos.x) > currenmtItemDetails.itemUseRadius || Mathf.Abs(mouseGridPos.y - playerGridPos.y) > currenmtItemDetails.itemUseRadius)
+        {
+            SetCursorInValid();
+            return;
+        }
+
+        TileDetails currentTile = GridMapManager.Instance.GetTileDetailsOnMousePosition(mouseGridPos);
+
+
+        if (currentTile != null)
+        {
+            switch (currenmtItemDetails.itemType)
+            {
+                //TODO:其他类型还未写
+                case ItemType.Commodity://商品
+                    if (currentTile.canDropItem)
+                        SetCursorValid();
+                    else
+                        SetCursorInValid();
+                    break;
+                case ItemType.HoeTool://锄头挖
+                    if (currentTile.canDig)
+                        SetCursorValid();
+                    else
+                        SetCursorInValid();
+                    break;
+                case ItemType.WaterTool://浇水
+                    if (currentTile.digDays > -1 && currentTile.waterDays == -1)
+                        SetCursorValid();
+                    else
+                        SetCursorInValid();
+                    break;
+                default:
+                    SetCursorInValid();
+                    break;
+            }
         }
         else
-            SetCursorImage(normal);
+            SetCursorInValid();
     }
 
-    private void SetCursorImage(Sprite sprite)
-    {
-        currentImage = sprite;
-        cursorImage.sprite = currentImage;
-    }
 
     //判断鼠标是否移位到UI界面上
     private bool InteractWithUI()
