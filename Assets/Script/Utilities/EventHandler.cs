@@ -29,10 +29,10 @@ public static class EventHandler
     /// <summary>
     /// 从玩家手中丢出去的时候生成的物品（会实现物品飞出效果）
     /// </summary>
-    public static event Action<int, Vector3> DropItemEvent;
-    public static void CallDropItemEvent(int itemID,Vector3 position)
+    public static event Action<int, Vector3, ItemType> DropItemEvent;
+    public static void CallDropItemEvent(int itemID,Vector3 position, ItemType itemType)
     {
-        DropItemEvent?.Invoke(itemID, position);
+        DropItemEvent?.Invoke(itemID, position, itemType);
     }
 
     /// <summary>
@@ -122,5 +122,27 @@ public static class EventHandler
         ExecuteActionAfterAnimation?.Invoke(mouseWorldPos, itemDetails);
     }
 
+    public static event Action<int, TileDetails> PlantSeedEvent;
+    public static void CallPlantSeedEvent(int itemID,TileDetails tileDetails)
+    {
+        PlantSeedEvent?.Invoke(itemID, tileDetails);
+    }
 
+    /// <summary>
+    /// 农作物成熟收集
+    /// </summary>
+    public static event Action<int> HarvestAtPlayerPosition;
+    public static void CallHarvestAtPlayerPosition(int itemID)
+    {
+        HarvestAtPlayerPosition?.Invoke(itemID);
+    }
+
+    /// <summary>
+    /// 刷新地图
+    /// </summary>
+    public static event Action RefreshCurrentMap;
+    public static void CallRefreshCurrentMap()
+    {
+        RefreshCurrentMap?.Invoke();
+    }
 }

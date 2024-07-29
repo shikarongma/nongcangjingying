@@ -20,15 +20,29 @@ namespace MFram.Inventory
         private void OnEnable()
         {//从玩家手里物品丢出来生成物品（在这里主要是实现背包物品数量的更改）
             EventHandler.DropItemEvent += OnDropItemEvent;
+            EventHandler.HarvestAtPlayerPosition += OnHarvestAtPlayerPosition;
         }
 
         private void OnDisable()
         {
             EventHandler.DropItemEvent -= OnDropItemEvent;
+            EventHandler.HarvestAtPlayerPosition += OnHarvestAtPlayerPosition;
+        }
+
+        private void OnHarvestAtPlayerPosition(int itemID)
+        {
+            //判断背包中是否有该物品
+            int index = GetItemIndexInBag(itemID);
+
+            //添加物品进背包
+            AddItemInBag(itemID, index, 1);
+
+            //通过事件将物品添加的UI中
+            EventHandler.CallUpdateInventoryUI(InventoryLocation.Player, playerBag.itemList);
         }
 
         //将物品拖到地上
-        private void OnDropItemEvent(int itemID, Vector3 position)
+        private void OnDropItemEvent(int itemID, Vector3 position, ItemType itemType)
         {
             RemoveItem(itemID, 1);
         }
@@ -55,7 +69,6 @@ namespace MFram.Inventory
             AddItemInBag(item.itemID, index, 1);
 
             
-            Debug.Log(GetItemDetails(item.itemID).itemID + GetItemDetails(item.itemID).itemName);
             if (toDestory)
             {
                 Destroy(item.gameObject);

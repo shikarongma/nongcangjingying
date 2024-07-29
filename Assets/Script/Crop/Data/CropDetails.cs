@@ -53,4 +53,34 @@ public class CropDetails
     public bool hasParticalEffect;//是否有粒子效果
 
     //TODO:特效，音效等
+
+    /// <summary>
+    /// 判断是否可以用这个工具收割该农作物
+    /// </summary>
+    /// <param name="toolID">工具ID</param>
+    /// <returns></returns>
+    public bool CheckToolAvailable(int toolID)
+    {
+        foreach(var tool in harvestToolItemID)
+        {
+            if(tool==toolID)
+                return true;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// 获取工具使用次数
+    /// </summary>
+    /// <param name="toolID">工具ID</param>
+    /// <returns></returns>
+    public int GetTotalRequireCount(int toolID)
+    {
+        for(int i = 0; i < harvestToolItemID.Length; i++)
+        {
+            if (harvestToolItemID[i] == toolID)
+                return requireActionCount[i];
+        }
+        return -1;
+    }
 }

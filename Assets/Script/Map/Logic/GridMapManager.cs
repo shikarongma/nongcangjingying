@@ -31,6 +31,7 @@ namespace MFarm.Map
             EventHandler.ExecuteActionAfterAnimation += OnExecuteActionAfterAnimation;
             EventHandler.AfterSceneUnloadEvent += OnAfterSceneUnloadEvent;
             EventHandler.GameDayEvent += OnGameDayEvent;
+            EventHandler.RefreshCurrentMap += RefresMap;
         }
 
         private void OnDisable()
@@ -38,8 +39,9 @@ namespace MFarm.Map
             EventHandler.ExecuteActionAfterAnimation -= OnExecuteActionAfterAnimation;
             EventHandler.AfterSceneUnloadEvent -= OnAfterSceneUnloadEvent;
             EventHandler.GameDayEvent-= OnGameDayEvent;
+            EventHandler.RefreshCurrentMap -= RefresMap;
         }
- 
+
 
         private void Start()
         {
@@ -82,8 +84,12 @@ namespace MFarm.Map
                 {
                     tile.Value.digDays = -1;
                     tile.Value.canDig = true;
+                    tile.Value.growthDays = -1;
                 }
-
+                if (tile.Value.seedItemID != -1)
+                {
+                    tile.Value.growthDays++;
+                }
                 RefresMap();
             }
         }
@@ -172,30 +178,58 @@ namespace MFarm.Map
 
             if (currentTile != null)
             {
+                Crop currentCrop = GetCropObject(mouseWorldPos);
                 //TODO:其他类型的物品具体使用功能还未书写
                 //物品使用实际功能
                 switch (itemDetails.itemType)
                 {
-                    case ItemType.Commodity:
-                        EventHandler.CallDropItemEvent(itemDetails.itemID, mouseWorldPos);
+                    case ItemType.Seed://种子
+                        EventHandler.CallPlantSeedEvent(itemDetails.itemID, currentTile);
+                        EventHandler.CallDropItemEvent(itemDetails.itemID, mouseWorldPos, itemDetails.itemType);
                         break;
-                    case ItemType.HoeTool:
+                    case ItemType.Commodity://商品
+                        EventHandler.CallDropItemEvent(itemDetails.itemID, mouseWorldPos, itemDetails.itemType);
+                        break;
+                    case ItemType.HoeTool://锄头
                         SetDigGround(currentTile);
                         currentTile.digDays = 0;
                         currentTile.canDig = false;
                         currentTile.canDropItem = false;
                         //音效
                         break;
-                    case ItemType.WaterTool:
+                    case ItemType.WaterTool://浇水
                         SetWaterGround(currentTile);
                         currentTile.waterDays = 0;
                         //音效
+                        break;
+                    case ItemType.ChopTool://斧头
+                        currentCrop.ProcessToolAction(itemDetails, currentCrop.tileDetails);
+                        break;
+                    case ItemType.CollectTool://收集
+                        currentCrop.ProcessToolAction(itemDetails, currentTile);
                         break;
                 }
 
                 UpdateTileDetails(currentTile);
             }
             
+        }
+
+        /// <summary>
+        /// 通过物理方法判断鼠标点击位置的农作物
+        /// </summary>
+        /// <param name="mouseWorldPos">鼠标点击坐标</param>
+        /// <returns></returns>
+        public Crop GetCropObject(Vector3 mouseWorldPos)
+        {
+            Collider2D[] collider = Physics2D.OverlapPointAll(mouseWorldPos);
+            Crop currentCrop = null;
+            for(int i = 0; i < collider.Length; i++)
+            {
+                if (collider[i].GetComponent<Crop>())
+                    currentCrop = collider[i].GetComponent<Crop>();
+            }
+            return currentCrop;
         }
 
         /// <summary>
@@ -247,6 +281,11 @@ namespace MFarm.Map
                 waterTileMap.ClearAllTiles();
             }
 
+            foreach (var crop in FindObjectsOfType<Crop>())
+            {
+                Destroy(crop.gameObject);
+            }
+
             DisplayMap(SceneManager.GetActiveScene().name);
         }
 
@@ -268,7 +307,8 @@ namespace MFarm.Map
                         SetDigGround(tileDetail);
                     if (tileDetail.waterDays > -1)
                         SetWaterGround(tileDetail);
-
+                    if (tileDetail.seedItemID > -1)
+                        EventHandler.CallPlantSeedEvent(tileDetail.seedItemID, tileDetail);
                 }
             }
         }

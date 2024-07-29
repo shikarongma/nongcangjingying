@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MFram.Inventory;
 
 public class AnimatorOverride : MonoBehaviour
 {
@@ -28,26 +29,45 @@ public class AnimatorOverride : MonoBehaviour
     {
         EventHandler.ItemSelectedEvent += OnItemSelectedEvent;
         EventHandler.BeforeSceneUnloadEvent += OnBeforeSceneUnloadEvent;
+        EventHandler.HarvestAtPlayerPosition += OnHarvestAtPlayerPosition;
     }
 
     private void OnDisable()
     {
         EventHandler.ItemSelectedEvent -= OnItemSelectedEvent;
         EventHandler.BeforeSceneUnloadEvent -= OnBeforeSceneUnloadEvent;
+        EventHandler.HarvestAtPlayerPosition += OnHarvestAtPlayerPosition;
+    }
+
+    private void OnHarvestAtPlayerPosition(int itemID)
+    {
+        Sprite itemSprite = InventroyManager.Instance.GetItemDetails(itemID).itemOnWorldSprite;
+        if (!holdItem.enabled)
+            StartCoroutine(ShowItem(itemSprite));
+    }
+
+    private IEnumerator ShowItem(Sprite itemSprite)
+    {
+        holdItem.enabled = true;
+        holdItem.sprite = itemSprite;
+        yield return new WaitForSeconds(1f);
+        holdItem.enabled = false;
     }
 
     private void OnItemSelectedEvent(ItemDetails itemDetails, bool isSelected)
     {
-        //
+        //TODO其他动作动画
         PartType currentType = itemDetails.itemType switch
         {
             ItemType.Seed => PartType.Carry,
             ItemType.Commodity => PartType.Carry,
             ItemType.HoeTool => PartType.Hoe,
             ItemType.WaterTool => PartType.Water,
+            ItemType.CollectTool => PartType.Collect,
             _ => PartType.None
         };
 
+        //举不举物品的判断
         if (isSelected == false)
         {
             currentType = PartType.None;
@@ -60,6 +80,8 @@ public class AnimatorOverride : MonoBehaviour
                 holdItem.sprite = itemDetails.itemOnWorldSprite;
                 holdItem.enabled = true;
             }
+            else
+                holdItem.enabled = false;
         }
 
         SwitchAnimator(currentType);

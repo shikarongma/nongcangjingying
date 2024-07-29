@@ -50,14 +50,22 @@ namespace MFram.InvenTory
             GetAllSceneItem();
         }
 
+        /// <summary>
+        /// 在指定坐标位置生成物品
+        /// </summary>
+        /// <param name="itemID"></param>
+        /// <param name="position"></param>
         private void OnInstantiateItemInScene(int itemID, Vector3 position)
         {
-            var item = Instantiate(itemPerfab, position, Quaternion.identity, itemParent);
+            var item = Instantiate(bounceItemPerfab, position, Quaternion.identity, itemParent);
             item.itemID = itemID;
+            item.GetComponent<ItemBounce>().InitBounceItem(position, Vector3.up);
         }
 
-        private void OnDropItemEvent(int itemID, Vector3 mousepPos)
+        private void OnDropItemEvent(int itemID, Vector3 mousepPos, ItemType itemType)
         {
+            if (itemType == ItemType.Seed)
+                return;
             //mousePos（即物品最终的位置），而此时生成的位置应该为Player的位置，因为是从player身上生成出来的
             var item = Instantiate(bounceItemPerfab, PlayerTransform.position, Quaternion.identity, itemParent);
             item.itemID = itemID;

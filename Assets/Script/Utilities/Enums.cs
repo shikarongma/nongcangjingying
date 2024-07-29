@@ -24,7 +24,7 @@ public enum InventoryLocation
 //物品的使用
 public enum PartType
 {
-    None,Carry,Hoe,Break,Water
+    None,Carry,Hoe,Break,Water,Collect,Chop
 }
 //玩家部分
 public enum PartName

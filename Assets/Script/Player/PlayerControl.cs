@@ -86,7 +86,7 @@ public class PlayerControl : MonoBehaviour
         if(itemDetails.itemType!=ItemType.Furniture&& itemDetails.itemType != ItemType.Commodity&& itemDetails.itemType != ItemType.Seed)
         {
             mouseX = mouseWorldPos.x - transform.position.x;
-            mouseY = mouseWorldPos.y - transform.position.y;
+            mouseY = mouseWorldPos.y - (transform.position.y + 0.85f);
 
             if (Mathf.Abs(mouseX) > Mathf.Abs(mouseY))//判断人物是该上下翻转还是左右翻转
                 mouseY = 0;

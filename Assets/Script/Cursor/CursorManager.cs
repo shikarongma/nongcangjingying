@@ -1,11 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEditor.EventSystems;
 using UnityEngine.EventSystems;
 using MFarm.Map;
+using MFarm.CropPlant;
 
 public class CursorManager : MonoBehaviour
 {
@@ -170,9 +168,17 @@ public class CursorManager : MonoBehaviour
 
         if (currentTile != null)
         {
+            CropDetails currentCrop = CropManager.Instance.GetCropDetails(currentTile.seedItemID);
+            Crop crop = GridMapManager.Instance.GetCropObject(mouseWorldPos);
             switch (currenmtItemDetails.itemType)
             {
                 //TODO:其他类型还未写
+                case ItemType.Seed://种子
+                    if(currentTile.digDays>-1&&currentTile.seedItemID==-1)
+                        SetCursorValid();
+                    else
+                        SetCursorInValid();
+                    break;
                 case ItemType.Commodity://商品
                     if (currentTile.canDropItem)
                         SetCursorValid();
@@ -188,6 +194,29 @@ public class CursorManager : MonoBehaviour
                 case ItemType.WaterTool://浇水
                     if (currentTile.digDays > -1 && currentTile.waterDays == -1)
                         SetCursorValid();
+                    else
+                        SetCursorInValid();
+                    break;
+                case ItemType.ChopTool://斧头
+                    if (crop != null)
+                    {
+                        if (crop.CanHarvest && crop.cropDetails.CheckToolAvailable(currenmtItemDetails.itemID))
+                            SetCursorValid();
+                        else SetCursorInValid();
+                    }
+                    else
+                        SetCursorInValid();
+                    break;
+                case ItemType.CollectTool://菜篮子
+                    if (currentCrop != null)
+                    {
+                        if (currentCrop.CheckToolAvailable(currenmtItemDetails.itemID))
+                        {
+                            if (currentTile.growthDays >= currentCrop.TotalGrowthDays)//农作物成熟之后才可以收获
+                                SetCursorValid();
+                            else SetCursorInValid();
+                        }
+                    }
                     else
                         SetCursorInValid();
                     break;

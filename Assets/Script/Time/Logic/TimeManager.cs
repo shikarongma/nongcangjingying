@@ -41,7 +41,7 @@ public class TimeManager : MonoBehaviour
                 UpdateGameTime();
             }
         }
-
+        //²âÊÔµØÍ¼ÍÚ¿Ó...
         if (Input.GetKeyDown(KeyCode.G))
         {
             gamedDay++;
