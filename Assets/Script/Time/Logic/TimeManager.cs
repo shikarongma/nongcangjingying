@@ -1,8 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TimeManager : MonoBehaviour
+public class TimeManager : Singleton<TimeManager>
 {
     //秒分时 日月年
     private int gameSecond, gameMinute, gameHour, gamedDay, gameMonth, gameYear;
@@ -19,14 +20,17 @@ public class TimeManager : MonoBehaviour
     //当前时间
     private float currentTime;
 
-    private void Awake()
+    public TimeSpan GameTime => new TimeSpan(gameHour, gameMinute, gameSecond);
+
+    protected override void Awake()
     {
+        base.Awake();
         NewGameTime();
     }
 
     private void Start()
     {
-        EventHandler.CallGameMinuteEvent(gameHour, gameMinute);
+        EventHandler.CallGameMinuteEvent(gameMinute, gameHour, gamedDay, gameSeason);
         EventHandler.CallGameDateEvent(gameHour, gamedDay, gameMonth, gameYear, gameSeason);
     }
 
@@ -44,7 +48,7 @@ public class TimeManager : MonoBehaviour
         //测试地图挖坑...
         if (Input.GetKeyDown(KeyCode.G))
         {
-            gamedDay++;
+            gameMinute++;
             EventHandler.CallGameDayEvent(gamedDay, gameSeason);
             EventHandler.CallGameDateEvent(gameHour, gamedDay, gameMonth, gameYear, gameSeason);
 
@@ -111,7 +115,7 @@ public class TimeManager : MonoBehaviour
                 }
                 EventHandler.CallGameDateEvent(gameHour, gamedDay, gameMonth, gameYear, gameSeason);
             }
-            EventHandler.CallGameMinuteEvent(gameHour, gameMinute);
+            EventHandler.CallGameMinuteEvent(gameMinute, gameHour, gamedDay, gameSeason);
         }
         //Debug.Log(gameSecond + " " + gameMinute);
     }

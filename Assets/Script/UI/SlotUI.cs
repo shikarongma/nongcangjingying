@@ -33,7 +33,7 @@ namespace MFrom.Inventory
         public int index;
 
         //»ñµÃInventoryUI
-        private InventoryUI inventoryUI => GetComponentInParent<InventoryUI>();
+        public InventoryUI inventoryUI => GetComponentInParent<InventoryUI>();
 
         
 

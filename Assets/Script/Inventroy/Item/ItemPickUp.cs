@@ -8,7 +8,7 @@ namespace MFram.Inventory{
         private void OnTriggerEnter2D(Collider2D other)
         {
             Item item = other.GetComponent<Item>();
-            if (item != null){
+            if (item != null && !item.notPickUp){
                 InventroyManager.Instance.AddItem(item, true);
             }
         }

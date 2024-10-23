@@ -2,13 +2,16 @@ using MFram.Inventory;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MFarm.CropPlant;
 
 public class Item : MonoBehaviour
 {
     public int itemID;
 
+    public bool notPickUp;
+
     private SpriteRenderer spriteRenderor;
-    private ItemDetails itemDetails;
+    public ItemDetails itemDetails;
 
     //实时更改碰撞体
     private BoxCollider2D boxCollider;
@@ -40,6 +43,13 @@ public class Item : MonoBehaviour
             Vector2 newSize = new Vector2(spriteRenderor.sprite.bounds.size.x, spriteRenderor.sprite.bounds.size.y);
             boxCollider.size = newSize;
             boxCollider.offset = new Vector2(0, spriteRenderor.sprite.bounds.center.y);
+        }
+
+        if (itemDetails.itemType == ItemType.ReapableScenery)
+        {
+            gameObject.AddComponent<ReapItem>();
+            gameObject.AddComponent<ItemInteractive>();
+            gameObject.GetComponent<ReapItem>().InitCropData(itemDetails.itemID);
         }
     }
 }

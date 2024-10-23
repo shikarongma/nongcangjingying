@@ -197,6 +197,7 @@ public class CursorManager : MonoBehaviour
                     else
                         SetCursorInValid();
                     break;
+                case ItemType.BreakTool://ÇÃ×Ó
                 case ItemType.ChopTool://¸«Í·
                     if (crop != null)
                     {
@@ -217,6 +218,12 @@ public class CursorManager : MonoBehaviour
                             else SetCursorInValid();
                         }
                     }
+                    else
+                        SetCursorInValid();
+                    break;
+                case ItemType.ReapTool://¸î²Ý
+                    if (GridMapManager.Instance.HaveReapableItemsInRadius(mouseWorldPos, currenmtItemDetails))
+                        SetCursorValid();
                     else
                         SetCursorInValid();
                     break;

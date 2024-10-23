@@ -118,3 +118,11 @@ public class TileDetails
     public int growthDays = -1;
     public int daysSinceLastHarvest = -1;//重生次数
 }
+
+[System.Serializable]
+public class NPCPosition
+{
+    public Transform npc;
+    public string startScene;
+    public Vector3 position;
+}

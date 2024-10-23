@@ -116,6 +116,8 @@ MonoBehaviour:
     generatePlayerPosiotion: 0
     hasAnimation: 0
     hasParticalEffect: 0
+    effectType: 0
+    effectPos: {x: 0, y: 0, z: 0}
   tileDetails:
     gridX: 0
     gridY: 0
@@ -139,8 +141,9 @@ GameObject:
   - component: {fileID: 6224804987958818952}
   - component: {fileID: 6224804987958818954}
   - component: {fileID: 6224804987958818953}
+  - component: {fileID: 2312362180599242734}
   m_Layer: 0
-  m_Name: Tree01_Top
+  m_Name: Tree02_Top
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -225,6 +228,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f9f79f32ac76a6408917188c37cbadc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!95 &2312362180599242734
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6224804987958818951}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 06eb189b5e708d14aabbf4ac3c86e3cd, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &6224804987972575680
 GameObject:
   m_ObjectHideFlags: 0
@@ -238,7 +262,7 @@ GameObject:
   - component: {fileID: 6224804987972575683}
   - component: {fileID: 6224804987972575682}
   m_Layer: 0
-  m_Name: Tree01_Bottom
+  m_Name: Tree02_Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

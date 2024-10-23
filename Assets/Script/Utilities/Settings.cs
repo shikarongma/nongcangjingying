@@ -17,4 +17,14 @@ public class Settings
 
     //场景渐入渐出的时间
     public const float fadeDuration = 1.5f;
+
+    //割草数量限制
+    public const int reapAmount = 2;
+
+    //NPC网格移动
+    public const float gridCellSize = 1;
+    public const float gridCellDiagonalSize = 1.41f;//斜方向距离
+    public const float pixelSize = 0.05f;//像素距离
+    public const float animationBreakTime = 5f;//动画间隔
+
 }

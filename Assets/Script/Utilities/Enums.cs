@@ -24,7 +24,7 @@ public enum InventoryLocation
 //物品的使用
 public enum PartType
 {
-    None,Carry,Hoe,Break,Water,Collect,Chop
+    None,Carry,Hoe,Break,Water,Collect,Chop,Reap
 }
 //玩家部分
 public enum PartName
@@ -42,4 +42,10 @@ public enum GridType
 {
     //挖，丢物品， ，npc障碍
     Diggable,DropItem,PlaceFurniture,NpcObstacle
+}
+
+//粒子效果
+public enum ParticleEffectType
+{
+    None,LeavesFalling01,LeavesFalling02,Rock/*石头*/,ReapableScenery/*稻草人*/
 }

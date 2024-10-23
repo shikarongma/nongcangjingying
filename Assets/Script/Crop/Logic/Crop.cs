@@ -35,6 +35,10 @@ public class Crop : MonoBehaviour
                     anim.SetTrigger("RotateLeft");
             }
             //播放粒子
+            if (cropDetails.hasParticalEffect)
+            {
+                EventHandler.CallParticleEffectEvent(cropDetails.effectType, transform.position + cropDetails.effectPos);
+            }
             //播放声音
         }
 
@@ -45,7 +49,7 @@ public class Crop : MonoBehaviour
                 //生成农作物
                 SpawnHarvestItems();
             }
-            else if (cropDetails.hasAnimation)
+            else if (anim != null && cropDetails.hasAnimation)
             {
                 if (PlayerTransfrom.position.x > transform.position.x)
                 {

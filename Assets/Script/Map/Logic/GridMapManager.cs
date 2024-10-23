@@ -4,6 +4,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
+using MFarm.CropPlant;
 
 namespace MFarm.Map
 {
@@ -24,6 +25,12 @@ namespace MFarm.Map
 
         //瓦片字典，关键字为坐标+场景name，key为瓦片
         private Dictionary<string, TileDetails> tileDetailsDict = new Dictionary<string, TileDetails>();
+
+        //场景是否第一次加载
+        private Dictionary<string, bool> firstLoadDict = new Dictionary<string, bool>();
+
+        //杂草列表
+        private List<ReapItem> itemsInRadius;
 
         //在GridMapManager里实现物品具体操作，因为物品很多都会改变Grid
         private void OnEnable()
@@ -47,6 +54,7 @@ namespace MFarm.Map
         {
             foreach(var mapData in mapDataList)
             {
+                firstLoadDict.Add(mapData.sceneName, true);
                 InitTileDetailsDict(mapData);
             }
         }
@@ -56,6 +64,13 @@ namespace MFarm.Map
             currentGrid = FindObjectOfType<Grid>();
             digTileMap = GameObject.FindWithTag("Dig").GetComponent<Tilemap>();
             waterTileMap = GameObject.FindWithTag("Water").GetComponent<Tilemap>();
+
+            if (firstLoadDict[SceneManager.GetActiveScene().name])
+            {
+                //预先生成农作物
+                EventHandler.CallGenerateCropEvent();
+                firstLoadDict[SceneManager.GetActiveScene().name] = false;
+            }
 
             RefresMap();
         }
@@ -202,11 +217,24 @@ namespace MFarm.Map
                         currentTile.waterDays = 0;
                         //音效
                         break;
+                    case ItemType.BreakTool://敲子
                     case ItemType.ChopTool://斧头
-                        currentCrop.ProcessToolAction(itemDetails, currentCrop.tileDetails);
+                        currentCrop?.ProcessToolAction(itemDetails, currentCrop.tileDetails);
                         break;
                     case ItemType.CollectTool://收集
                         currentCrop.ProcessToolAction(itemDetails, currentTile);
+                        break;
+                    case ItemType.ReapTool://割草
+                        int reapCount = 0;
+                        for(int i = 0; i < itemsInRadius.Count; i++)
+                        {
+                            EventHandler.CallParticleEffectEvent(ParticleEffectType.ReapableScenery, itemsInRadius[i].transform.position + Vector3.up);
+                            itemsInRadius[i].SpawnHarvestItems();
+                            Destroy(itemsInRadius[i].gameObject);
+                            reapCount++;
+                            if (reapCount >= Settings.reapAmount)
+                                break;
+                        }
                         break;
                 }
 
@@ -230,6 +258,36 @@ namespace MFarm.Map
                     currentCrop = collider[i].GetComponent<Crop>();
             }
             return currentCrop;
+        }
+
+        /// <summary>
+        /// 返回工具范围内的杂草
+        /// </summary>
+        /// <param name="tool">工具信息</param>
+        /// <returns></returns>
+        public bool HaveReapableItemsInRadius(Vector3 mouseWorldPos, ItemDetails toolItem)
+        {
+            itemsInRadius = new List<ReapItem>();
+
+            Collider2D[] colliders = new Collider2D[20];
+
+            Physics2D.OverlapCircleNonAlloc(mouseWorldPos, toolItem.itemUseRadius, colliders);
+
+            if (colliders.Length > 0)
+            {
+                for (int i = 0; i < colliders.Length; i++)
+                {
+                    if (colliders[i] != null)
+                    {
+                        if (colliders[i].GetComponent<ReapItem>())
+                        {
+                            var item = colliders[i].GetComponent<ReapItem>();
+                            itemsInRadius.Add(item);
+                        }
+                    }
+                }
+            }
+            return itemsInRadius.Count > 0;
         }
 
         /// <summary>
@@ -258,12 +316,16 @@ namespace MFarm.Map
         /// 更新瓦片信息
         /// </summary>
         /// <param name="tileDetails"></param>
-        private void UpdateTileDetails(TileDetails tileDetails)
+        public void UpdateTileDetails(TileDetails tileDetails)
         {
             string key = tileDetails.gridX + "x" + tileDetails.gridY + "y" + SceneManager.GetActiveScene().name;
             if (tileDetailsDict.ContainsKey(key))
             {
                 tileDetailsDict[key] = tileDetails;
+            }
+            else
+            {
+                tileDetailsDict.Add(key, tileDetails);
             }
         }
 
@@ -311,6 +373,34 @@ namespace MFarm.Map
                         EventHandler.CallPlantSeedEvent(tileDetail.seedItemID, tileDetail);
                 }
             }
+        }
+
+        /// <summary>
+        /// 根据场景名字构建网格范围，输出范围和原点
+        /// </summary>
+        /// <param name="sceneName">场景名字</param>
+        /// <param name="gridDimensions">网格范围</param>
+        /// <param name="gridOrigin">网格原点</param>
+        /// <returns></returns>
+        public bool GetGridDimensions(string sceneName,out Vector2Int gridDimensions,out Vector2Int gridOrigin)
+        {
+            gridDimensions = Vector2Int.zero;
+            gridOrigin = Vector2Int.zero;
+
+            foreach(var mapData in mapDataList)
+            {
+                if (mapData.sceneName == sceneName)
+                {
+                    gridDimensions.x = mapData.gridWidth;
+                    gridDimensions.y = mapData.gridHeight;
+
+                    gridOrigin.x = mapData.originX;
+                    gridOrigin.y = mapData.originY;
+
+                    return true;
+                }
+            }
+            return false;
         }
 
     }

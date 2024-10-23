@@ -53,6 +53,8 @@ public class CropDetails
     public bool hasParticalEffect;//是否有粒子效果
 
     //TODO:特效，音效等
+    public ParticleEffectType effectType;
+    public Vector3 effectPos;
 
     /// <summary>
     /// 判断是否可以用这个工具收割该农作物

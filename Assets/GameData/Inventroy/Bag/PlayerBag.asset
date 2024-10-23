@@ -15,24 +15,24 @@ MonoBehaviour:
   itemList:
   - itemID: 1021
     itemAmount: 3
-  - itemID: 1006
-    itemAmount: 1
-  - itemID: 1002
-    itemAmount: 2
-  - itemID: 0
-    itemAmount: 0
-  - itemID: 0
-    itemAmount: 0
-  - itemID: 1007
-    itemAmount: 7
-  - itemID: 1011
-    itemAmount: 5
-  - itemID: 1025
-    itemAmount: 1
-  - itemID: 1028
-    itemAmount: 26
   - itemID: 1000
-    itemAmount: 2
+    itemAmount: 17
+  - itemID: 1028
+    itemAmount: 18
+  - itemID: 1030
+    itemAmount: 14
+  - itemID: 1027
+    itemAmount: 7
+  - itemID: 1022
+    itemAmount: 3
+  - itemID: 1026
+    itemAmount: 14
+  - itemID: 1024
+    itemAmount: 5
+  - itemID: 1023
+    itemAmount: 5
+  - itemID: 1038
+    itemAmount: 29
   - itemID: 0
     itemAmount: 0
   - itemID: 0

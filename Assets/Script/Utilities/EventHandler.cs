@@ -47,10 +47,10 @@ public static class EventHandler
     /// <summary>
     /// 更改时间UI
     /// </summary>
-    public static event Action<int, int> GameMinuteEvent;
-    public static void CallGameMinuteEvent(int hour,int minute)
+    public static event Action<int, int, int, Season> GameMinuteEvent;
+    public static void CallGameMinuteEvent(int minute, int hour, int day, Season season)
     {
-        GameMinuteEvent?.Invoke(hour, minute);
+        GameMinuteEvent?.Invoke(minute, hour, day, season);
     }
 
     public static event Action<int, Season> GameDayEvent;
@@ -144,5 +144,20 @@ public static class EventHandler
     public static void CallRefreshCurrentMap()
     {
         RefreshCurrentMap?.Invoke();
+    }
+
+    /// <summary>
+    /// 粒子对象
+    /// </summary>
+    public static event Action<ParticleEffectType, Vector3> ParticleEffectEvent;
+    public static void CallParticleEffectEvent(ParticleEffectType effectType, Vector3 pos)
+    {
+        ParticleEffectEvent?.Invoke(effectType, pos);
+    }
+
+    public static event Action GenerateCropEvent;
+    public static void CallGenerateCropEvent()
+    {
+        GenerateCropEvent?.Invoke();
     }
 }
