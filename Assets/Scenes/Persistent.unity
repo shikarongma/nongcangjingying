@@ -761,9 +761,9 @@ MonoBehaviour:
   displayStartAndFinish: 0
   displayPath: 0
   npcMovement: {fileID: 1856322632}
-  moveNPC: 1
+  moveNPC: 0
   targetScene: 01.Field
-  targetPos: {x: 2, y: -6}
+  targetPos: {x: 0, y: -5}
   stopClip: {fileID: 7400000, guid: 54d560542c0284c169c56cddc7145ac6, type: 2}
 --- !u!114 &672216799
 MonoBehaviour:
@@ -807,7 +807,8 @@ MonoBehaviour:
   NpcPositionList:
   - npc: {fileID: 1856322631}
     startScene: 01.Field
-    position: {x: -0.88, y: -5.35, z: 0}
+    position: {x: -0.74, y: -5.66, z: 0}
+  SceneRouteData: {fileID: 11400000, guid: 0e101cc0c1fd69442ad4a655acb37660, type: 2}
 --- !u!1 &698222703
 GameObject:
   m_ObjectHideFlags: 0
@@ -1137,7 +1138,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!156049354 &1116923696
 Grid:
   m_ObjectHideFlags: 0

@@ -1,9 +1,11 @@
 using DG.Tweening;
 using UnityEngine;
 
+//人物经过是否变透明
 [RequireComponent(typeof(SpriteRenderer))]
 public class ItemFader : MonoBehaviour
 {
+
     private SpriteRenderer spriteRenderer;
     
     private void Awake()

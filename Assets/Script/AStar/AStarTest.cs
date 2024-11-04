@@ -37,12 +37,12 @@ namespace MFarm.AStar
         {
             ShowPathOnGridMap();
 
-            //if (moveNPC)
-            //{
-            //    moveNPC = false;
-            //    var schedule = new ScheduleDetails(0, 0, 0, 0, Season.뉴센, targetScene, targetPos, stopClip, true);
-            //    npcMovement.BuildPath(schedule);
-            //}
+            if (moveNPC)
+            {
+                moveNPC = false;
+                var schedule = new ScheduleDetails(0, 0, 0, 0, Season.뉴센, targetScene, targetPos, stopClip, true);
+                npcMovement.BuildPath(schedule);
+            }
         }
 
         /// <summary>
